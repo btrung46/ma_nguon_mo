@@ -53,7 +53,22 @@ def calculate_average(data, student_id):
         except ValueError:
             return "Có lỗi khi chuyển đổi điểm sang số thực. Vui lòng kiểm tra dữ liệu."
 
-
+def search_subject_for_student(data, subject_name,student_id):
+    """Search for grades of a specific subject."""
+    if data.size == 0:
+        return "Dữ liệu không được tải."
+    subject_data = data[data[:, 2] == subject_name]
+    if subject_data.size == 0:
+        return f"Không tìm thấy điểm cho môn học {subject_name}."
+    else:
+        student_maxcore = None
+        for row in subject_data:
+            if row[0] == student_id:
+                student_maxcore = row
+        if student_maxcore is not None:
+            return "\n".join([f"ID: {student_maxcore[0]}, Tên: {student_maxcore[1]}, Điểm: {student_maxcore[3]}"])
+        else:
+            return f"Không tìm thấy ID sinh viên {student_id} cho môn học {subject_name}."
 def search_action():
     choice = choice_var.get()
     student_id = id_entry.get()
@@ -65,6 +80,8 @@ def search_action():
         result = search_subject(data, subject_name)
     elif choice == '3':  # Tính TBC điểm của sinh viên
         result = calculate_average(data, student_id)
+    elif choice == '4':  # Tính TBC điểm của sinh viên
+        result = search_subject_for_student(data, subject_name,student_id)
     else:
         result = "Lựa chọn không hợp lệ."
 
@@ -89,6 +106,7 @@ def main():
     tk.Radiobutton(root, text="Tìm kiếm thông tin sinh viên", variable=choice_var, value='1').pack(anchor='w')
     tk.Radiobutton(root, text="Tìm kiếm điểm môn học", variable=choice_var, value='2').pack(anchor='w')
     tk.Radiobutton(root, text="Tính TBC điểm của sinh viên", variable=choice_var, value='3').pack(anchor='w')
+    tk.Radiobutton(root, text="Tìm kiếm điểm môn học chon từng sinh viên", variable=choice_var, value='4').pack(anchor='w')
 
     tk.Label(root, text="ID sinh viên:").pack(pady=5)
     global id_entry
